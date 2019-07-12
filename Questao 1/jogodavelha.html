@@ -20,27 +20,34 @@
             padding-top: 20px;
             text-align: center;
         }
+
+        #win{
+            text-align: center;
+            color: brown;
+        }
     </style>
 </head>
 
 <body>
     <div class="grid">
-        <div id="a1" class="espaco"></div>
-        <div id="a2" class="espaco"></div>
-        <div id="a3" class="espaco"></div>
+        <!-- criado atributo jogada para facilitar na hora de verificar se alguem venceu -->
+        <div id="a1" class="espaco" jogada=""></div>
+        <div id="a2" class="espaco" jogada=""></div>
+        <div id="a3" class="espaco" jogada=""></div>
 
-        <div id="b1" class="espaco"></div>
-        <div id="b2" class="espaco"></div>
-        <div id="b3" class="espaco"></div>
+        <div id="b1" class="espaco" jogada=""></div>
+        <div id="b2" class="espaco" jogada=""></div>
+        <div id="b3" class="espaco" jogada=""></div>
 
-        <div id="c1" class="espaco"></div>
-        <div id="c2" class="espaco"></div>
-        <div id="c3" class="espaco"></div>
+        <div id="c1" class="espaco" jogada=""></div>
+        <div id="c2" class="espaco" jogada=""></div>
+        <div id="c3" class="espaco" jogada=""></div>
     </div>
-
+    <p id="win"></p>
     <script>
         var jogadorX = "X";
         var jogadorO = "O";
+        var marcada = 0;
         var playTime = jogadorX;
 
         jogada();
@@ -49,15 +56,58 @@
             var espacos = document.getElementsByClassName("espaco");
             for (let i = 0; espacos.length; i++) {
                 espacos[i].addEventListener("click", function () {
-                    if (playTime == jogadorX) {
-                        this.innerHTML = "<img src='x.png'>";
-                        playTime = jogadorO;
-                    }
-                    else {
-                        this.innerHTML = "<img src='o.png'>";
-                        playTime = jogadorX;
+                    if (espacos[i].getElementsByTagName("img").length == 0) { // verifica se nao tinha nada antes pra nao poder marcar em cima
+                        if (playTime == jogadorX) {
+                            this.innerHTML = "<img src='x.png'>";
+                            this.setAttribute("jogada", jogadorX);
+                            playTime = jogadorO;
+                        }
+                        else {
+                            this.innerHTML = "<img src='o.png'>";
+                            this.setAttribute("jogada", jogadorO);
+                            playTime = jogadorX;
+                        }
+                        marcada++;
+                        houveVencedor();
                     }
                 });
+            }
+        }
+
+        function houveVencedor() {
+            var a1 = document.getElementById("a1").getAttribute("jogada");
+            var a2 = document.getElementById("a2").getAttribute("jogada");
+            var a3 = document.getElementById("a3").getAttribute("jogada");
+
+            var b1 = document.getElementById("b1").getAttribute("jogada");
+            var b2 = document.getElementById("b2").getAttribute("jogada");
+            var b3 = document.getElementById("b3").getAttribute("jogada");
+
+            var c1 = document.getElementById("c1").getAttribute("jogada");
+            var c2 = document.getElementById("c2").getAttribute("jogada");
+            var c3 = document.getElementById("c3").getAttribute("jogada");
+
+            var vencedor = "";
+            var textoFinal = document.getElementsByTagName("p")[0];
+
+            //verificando primeira vertical, primeira horizontal e diagonal principal
+            if ((a1 == b1 && a1 == c1 && a1 != "") || (a1 == a2 && a1 == a3 && a1 != "") || (a1 == b2 && a1 == c3 && a1 != "")) {
+                vencedor = a1;
+            }
+            //verificando segunda horizontal, segunda vertical e diagonal secundaria
+            else if ((b2 == b1 && b2 == b3 && b2 != "") || (b2 == a2 && b2 == c2 && b2 != "") || (b2 == a3 && b2 == c1 && b2 != "")) {
+                vencedor = b2;
+            }
+            //verificando terceira horizontal e terceira vertical
+            else if ((c3 == c2 && c3 == c1 && c3 != "") || (c3 == a3 && c3 == b3 && c3 != "")) {
+                vencedor = c3;
+            }
+
+            if (vencedor != "") {
+                textoFinal.textContent = "O VENCEDOR FOI O: " + vencedor + " !!!";
+            }
+            else if(marcada == 9){
+                textoFinal.textContent = "O JOGO DEU VELHA!!!";
             }
         }
     </script>
